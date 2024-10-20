@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/rivo/tview"
+	"github.com/0xJWLabs/tview"
 )
 
 type TableData struct {
