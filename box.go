@@ -293,6 +293,7 @@ func (b *Box) GetMouseCapture() func(action MouseAction, event *tcell.EventMouse
 func (b *Box) SetBackgroundColor(color tcell.Color) *Box {
 	b.backgroundColor = color
 	b.borderStyle = b.borderStyle.Background(color)
+	b.focusBorderStyle = b.focusBorderStyle.Background(color)
 	return b
 }
 
