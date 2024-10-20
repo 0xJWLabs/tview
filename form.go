@@ -103,6 +103,12 @@ type Form struct {
 	// such key is known yet.
 	lastFinishedKey tcell.Key
 
+	// The text color of the checkbox area.
+	checkboxTextColor tcell.Color
+
+	// The background color of the checkbox area.
+	checkboxBackgroundColor tcell.Color
+
 	// An optional function which is called when the user hits Escape.
 	cancel func()
 }
@@ -112,15 +118,17 @@ func NewForm() *Form {
 	box := NewBox().SetBorderPadding(1, 1, 1, 1)
 
 	f := &Form{
-		Box:                  box,
-		itemPadding:          1,
-		labelColor:           Styles.SecondaryTextColor,
-		fieldBackgroundColor: Styles.ContrastBackgroundColor,
-		fieldTextColor:       Styles.PrimaryTextColor,
-		buttonStyle:          tcell.StyleDefault.Background(Styles.ContrastBackgroundColor).Foreground(Styles.PrimaryTextColor),
-		buttonActivatedStyle: tcell.StyleDefault.Background(Styles.PrimaryTextColor).Foreground(Styles.ContrastBackgroundColor),
-		buttonDisabledStyle:  tcell.StyleDefault.Background(Styles.ContrastBackgroundColor).Foreground(Styles.ContrastSecondaryTextColor),
-		lastFinishedKey:      tcell.KeyTab, // To skip over inactive elements at the beginning of the form.
+		Box:                     box,
+		itemPadding:             1,
+		labelColor:              Styles.SecondaryTextColor,
+		fieldBackgroundColor:    Styles.ContrastBackgroundColor,
+		fieldTextColor:          Styles.PrimaryTextColor,
+		checkboxBackgroundColor: Styles.ContrastBackgroundColor,
+		checkboxTextColor:       Styles.PrimaryTextColor,
+		buttonStyle:             tcell.StyleDefault.Background(Styles.ContrastBackgroundColor).Foreground(Styles.PrimaryTextColor),
+		buttonActivatedStyle:    tcell.StyleDefault.Background(Styles.PrimaryTextColor).Foreground(Styles.ContrastBackgroundColor),
+		buttonDisabledStyle:     tcell.StyleDefault.Background(Styles.ContrastBackgroundColor).Foreground(Styles.ContrastSecondaryTextColor),
+		lastFinishedKey:         tcell.KeyTab, // To skip over inactive elements at the beginning of the form.
 	}
 
 	return f
@@ -158,6 +166,18 @@ func (f *Form) SetFieldBackgroundColor(color tcell.Color) *Form {
 // SetFieldTextColor sets the text color of the input areas.
 func (f *Form) SetFieldTextColor(color tcell.Color) *Form {
 	f.fieldTextColor = color
+	return f
+}
+
+// SetCheckboxBackgroundColor sets the background color of the checkbox areas.
+func (f *Form) SetCheckboxBackgroundColor(color tcell.Color) *Form {
+	f.checkboxBackgroundColor = color
+	return f
+}
+
+// SetCheckboxTextColor sets the text color of the checkbox areas.
+func (f *Form) SetCheckboxTextColor(color tcell.Color) *Form {
+	f.checkboxTextColor = color
 	return f
 }
 
@@ -570,13 +590,25 @@ func (f *Form) Draw(screen tcell.Screen) {
 		if x+itemWidth >= rightLimit {
 			itemWidth = rightLimit - x
 		}
-		item.SetFormAttributes(
-			labelWidth,
-			f.labelColor,
-			f.backgroundColor,
-			f.fieldTextColor,
-			f.fieldBackgroundColor,
-		)
+		if checkbox, ok := item.(*Checkbox); ok {
+			// item is a Checkbox, you can use checkbox here
+			checkbox.SetFormAttributes(
+				labelWidth,
+				f.labelColor,
+				f.backgroundColor,
+				f.checkboxTextColor,
+				f.checkboxBackgroundColor,
+			)
+		} else {
+			// item is not a checkbox
+			item.SetFormAttributes(
+				labelWidth,
+				f.labelColor,
+				f.backgroundColor,
+				f.fieldTextColor,
+				f.fieldBackgroundColor,
+			)
+		}
 
 		// Save position.
 		positions[index].x = x
