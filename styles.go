@@ -10,6 +10,7 @@ type Theme struct {
 	BorderColor                 tcell.Color // Box borders.
 	FocusBorderColor						tcell.Color // Box borders focus.
 	TitleColor                  tcell.Color // Box titles.
+	FocusTitleColor							tcell.Color // Box titles focus.
 	GraphicsColor               tcell.Color // Graphics.
 	PrimaryTextColor            tcell.Color // Primary text.
 	SecondaryTextColor          tcell.Color // Secondary text (e.g. labels).
@@ -28,6 +29,7 @@ var Styles = Theme{
 	BorderColor:                 tcell.ColorWhite,
 	FocusBorderColor:						 tcell.ColorGrey,
 	TitleColor:                  tcell.ColorWhite,
+	FocusTitleColor:						 tcell.ColorGrey,
 	GraphicsColor:               tcell.ColorWhite,
 	PrimaryTextColor:            tcell.ColorWhite,
 	SecondaryTextColor:          tcell.ColorYellow,

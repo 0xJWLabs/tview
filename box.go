@@ -46,6 +46,9 @@ type Box struct {
 	// The color of the title.
 	titleColor tcell.Color
 
+	// The color of the focus title.
+	focusTitleColor tcell.Color
+
 	// The alignment of the title.
 	titleAlign int
 
@@ -85,6 +88,7 @@ func NewBox() *Box {
 		borderStyle:     tcell.StyleDefault.Foreground(Styles.BorderColor).Background(Styles.PrimitiveBackgroundColor),
 		focusBorderStyle:     tcell.StyleDefault.Foreground(Styles.FocusBorderColor).Background(Styles.PrimitiveBackgroundColor),
 		titleColor:      Styles.TitleColor,
+		focusTitleColor: Styles.FocusTitleColor,
 		titleAlign:      AlignCenter,
 		titlePaddingLeft: 0,
 		titlePaddingRight: 0,
@@ -404,6 +408,12 @@ func (b *Box) SetTitleColor(color tcell.Color) *Box {
 	return b
 }
 
+// SetFocusTitleColor sets the box's focus title color.
+func (b *Box) SetFocusTitleColor(color tcell.Color) *Box {
+	b.focusTitleColor = color
+	return b
+}
+
 // SetTitleAlign sets the alignment of the title, one of AlignLeft, AlignCenter,
 // or AlignRight.
 func (b *Box) SetTitleAlign(align int) *Box {
@@ -475,8 +485,16 @@ func (b *Box) DrawForSubclass(screen tcell.Screen, p Primitive) {
 
 		// Draw title.
 		if b.title != "" && b.width >= 4 {
-			title := strings.Repeat(" ", b.titlePaddingLeft) + b.title + strings.Repeat(" ", b.titlePaddingRight) 
-			printed, _ := Print(screen, title, b.x+1, b.y, b.width-2, b.titleAlign, b.titleColor)
+			var titleColor tcell.Color
+			title := strings.Repeat(" ", b.titlePaddingLeft) + b.title + strings.Repeat(" ", b.titlePaddingRight)
+
+			if p.HasFocus() {
+				titleColor = b.focusTitleColor
+			} else {
+				titleColor = b.titleColor
+			}
+
+			printed, _ := Print(screen, title, b.x+1, b.y, b.width-2, b.titleAlign, titleColor)
 			if len(title)-printed > 0 && printed > 0 {
 				xEllipsis := b.x + b.width - 2
 				if b.titleAlign == AlignRight {
