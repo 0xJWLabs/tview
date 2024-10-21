@@ -1,6 +1,7 @@
 package tview
 
 import (
+	"strings"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -48,6 +49,9 @@ type Box struct {
 	// The alignment of the title.
 	titleAlign int
 
+	// Title inner padding.
+	titlePaddingLeft, titlePaddingRight int
+
 	// Whether or not this box has focus. This is typically ignored for
 	// container primitives (e.g. Flex, Grid, Pages), as they will delegate
 	// focus to their children.
@@ -82,6 +86,8 @@ func NewBox() *Box {
 		focusBorderStyle:     tcell.StyleDefault.Foreground(Styles.FocusBorderColor).Background(Styles.PrimitiveBackgroundColor),
 		titleColor:      Styles.TitleColor,
 		titleAlign:      AlignCenter,
+		titlePaddingLeft: 0,
+		titlePaddingRight: 0,
 	}
 	return b
 }
@@ -381,6 +387,12 @@ func (b *Box) SetTitle(title string) *Box {
 	return b
 }
 
+// SetTitlePadding sets the box's title padding.
+func (b *Box) SetTitlePadding(left int, right int) *Box {
+	b.titlePaddingLeft, b.titlePaddingRight = left, right
+	return b
+}
+
 // GetTitle returns the box's current title.
 func (b *Box) GetTitle() string {
 	return b.title
@@ -463,8 +475,9 @@ func (b *Box) DrawForSubclass(screen tcell.Screen, p Primitive) {
 
 		// Draw title.
 		if b.title != "" && b.width >= 4 {
-			printed, _ := Print(screen, b.title, b.x+1, b.y, b.width-2, b.titleAlign, b.titleColor)
-			if len(b.title)-printed > 0 && printed > 0 {
+			title := strings.Repeat(" ", b.titlePaddingLeft) + b.title + strings.Repeat(" ", b.titlePaddingRight) 
+			printed, _ := Print(screen, title, b.x+1, b.y, b.width-2, b.titleAlign, b.titleColor)
+			if len(title)-printed > 0 && printed > 0 {
 				xEllipsis := b.x + b.width - 2
 				if b.titleAlign == AlignRight {
 					xEllipsis = b.x + 1
